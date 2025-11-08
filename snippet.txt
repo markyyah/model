@@ -1,0 +1,22 @@
+<model-viewer src="gas turbine engine exploded view. glTF.glb" ar ar-modes="webxr scene-viewer quick-look" camera-controls tone-mapping="neutral" poster="poster.webp" shadow-intensity="1.18" shadow-softness="0.4" autoplay environment-image="aircraft_workshop_01_1k.hdr">
+    <button class="Hotspot" slot="hotspot-1" data-surface="0 0 226 224 225 0.361 0.462 0.177" data-visibility-attribute="visible">
+        <div class="HotspotAnnotation">Air Inlet</div>
+    </button><button class="Hotspot" slot="hotspot-2" data-surface="0 0 28200 28201 28199 0.188 0.030 0.782" data-visibility-attribute="visible">
+        <div class="HotspotAnnotation">Compressor Section</div>
+    </button><button class="Hotspot" slot="hotspot-3" data-surface="825 0 295 297 298 0.107 0.348 0.545" data-visibility-attribute="visible">
+        <div class="HotspotAnnotation">Exhaust Section</div>
+    </button><button class="Hotspot" slot="hotspot-4" data-surface="45 0 30 31 32 0.527 0.264 0.209" data-visibility-attribute="visible">
+        <div class="HotspotAnnotation">Turbine Section</div>
+    </button><button class="Hotspot" slot="hotspot-5" data-surface="722 0 2213 2211 1988 0.068 0.459 0.473" data-visibility-attribute="visible">
+        <div class="HotspotAnnotation">Engine cowling</div>
+    </button>
+    <div class="progress-bar hide" slot="progress-bar">
+        <div class="update-bar"></div>
+    </div>
+    <button slot="ar-button" id="ar-button">
+        View in your space
+    </button>
+    <div id="ar-prompt">
+        <img src="https://modelviewer.dev/shared-assets/icons/hand.png">
+    </div>
+</model-viewer>

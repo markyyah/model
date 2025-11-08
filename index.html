@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR Turbine Engine</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <model-viewer 
+        src="gas turbine engine exploded view. glTF.glb" 
+        ar 
+        ar-modes="webxr scene-viewer quick-look" 
+        camera-controls 
+        tone-mapping="neutral" 
+        poster="poster.webp" 
+        shadow-intensity="1.18" 
+        shadow-softness="0.4" 
+        autoplay 
+        environment-image="aircraft_workshop_01_1k.hdr" 
+        interpolation-decay="200" 
+        camera-orbit-transition-time="2000ms">
+        
+        <button class="Hotspot" slot="hotspot-1" data-surface="0 0 226 224 225 0.361 0.462 0.177" data-visibility-attribute="visible">
+            <div class="HotspotAnnotation">Air Inlet</div>
+        </button>
+        <button class="Hotspot" slot="hotspot-2" data-surface="0 0 28200 28201 28199 0.188 0.030 0.782" data-visibility-attribute="visible">
+            <div class="HotspotAnnotation">Compressor Section</div>
+        </button>
+        <button class="Hotspot" slot="hotspot-3" data-surface="825 0 295 297 298 0.107 0.348 0.545" data-visibility-attribute="visible">
+            <div class="HotspotAnnotation">Exhaust Section</div>
+        </button>
+        <button class="Hotspot" slot="hotspot-4" data-surface="45 0 30 31 32 0.527 0.264 0.209" data-visibility-attribute="visible">
+            <div class="HotspotAnnotation">Turbine Section</div>
+        </button>
+        <button class="Hotspot" slot="hotspot-5" data-surface="722 0 2213 2211 1988 0.068 0.459 0.473" data-visibility-attribute="visible">
+            <div class="HotspotAnnotation">Engine cowling</div>
+        </button>
+        <button class="Hotspot" slot="hotspot-6" data-surface="0 0 0 0 0 -0.168 -0.192 0.5" data-visibility-attribute="visible">
+            <div class="HotspotAnnotation">Combustion Section</div>
+        </button>
+        
+        <div class="progress-bar hide" slot="progress-bar">
+            <div class="update-bar"></div>
+        </div>
+        
+        <button slot="ar-button" id="ar-button" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 15px 30px; border-radius: 25px; font-size: 16px; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.3); cursor: pointer;">
+            🚀 View in AR
+        </button>
+        
+        <div id="ar-prompt">
+            <img src="ar_hand_prompt.png">
+        </div>
+    </model-viewer>
+    
+    <div id="ar-ui" style="position: fixed; top: 20px; left: 20px; z-index: 1000; display: flex; flex-direction: column; gap: 10px;">
+        <button id="reset-btn" style="display: none; padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">Show All Hotspots</button>
+        
+        <select id="hotspot-dropdown" style="padding: 12px 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; box-shadow: 0 4px 15px rgba(0,0,0,0.2); min-width: 200px;">
+            <option value="" style="background: white; color: black;">Select Component</option>
+            <option value="Air Inlet" style="background: white; color: black;">Air Inlet</option>
+            <option value="Compressor Section" style="background: white; color: black;">Compressor Section</option>
+            <option value="Combustion Section" style="background: white; color: black;">Combustion Section</option>
+            <option value="Turbine Section" style="background: white; color: black;">Turbine Section</option>
+            <option value="Exhaust Section" style="background: white; color: black;">Exhaust Section</option>
+            <option value="Engine cowling" style="background: white; color: black;">Engine cowling</option>
+        </select>
+    </div>
+    
+    <div id="description-panel" style="display: none; position: fixed; bottom: 20px; left: 20px; max-width: 350px; background: rgba(255,255,255,0.95); padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); z-index: 1000;">
+        <h3 id="description-title" style="margin: 0 0 15px 0; color: #333; font-size: 18px; font-weight: 600;"></h3>
+        <div id="description-content" style="color: #555; font-size: 14px; line-height: 1.6;"></div>
+    </div>
+    
+    <script src="script.js"></script>
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+</body>
+</html>
