@@ -4,82 +4,208 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AR Turbine Engine</title>
-    <link rel="stylesheet" href="styles.css">
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
+    <style>
+        body { margin: 0; font-family: Arial; }
+        #ar-ui { position: fixed; top: 20px; left: 20px; z-index: 1000; display: flex; flex-direction: column; gap: 10px; }
+        #reset-btn { display: none; padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        #hotspot-dropdown { padding: 12px 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; box-shadow: 0 4px 15px rgba(0,0,0,0.2); min-width: 200px; }
+        #description-panel { display: none; position: fixed; bottom: 20px; left: 20px; max-width: 350px; background: rgba(255,255,255,0.95); padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); z-index: 1000; }
+        #description-title { margin: 0 0 15px 0; color: #333; font-size: 18px; font-weight: 600; }
+        #description-content { color: #555; font-size: 14px; line-height: 1.6; }
+    </style>
 </head>
 <body>
-    <model-viewer 
-        src="./gas turbine engine exploded view. glTF.glb" 
-        alt="AR Turbine Engine Model"
-        ar 
-        ar-modes="scene-viewer quick-look" 
-        ar-scale="fixed"
-        camera-controls 
-        tone-mapping="neutral" 
-        poster="./poster.webp" 
-        shadow-intensity="1.18" 
-        shadow-softness="0.4" 
-        autoplay 
-        environment-image="./aircraft_workshop_01_1k.hdr" 
-        interpolation-decay="200" 
-        camera-orbit-transition-time="2000ms"
-        loading="eager">
+    <a-scene 
+        vr-mode-ui="enabled: false" 
+        arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;"
+        renderer="antialias: true; alpha: true">
         
-        <button class="Hotspot" slot="hotspot-1" data-surface="0 0 226 224 225 0.361 0.462 0.177" data-visibility-attribute="visible">
-            <div class="HotspotAnnotation">Air Inlet</div>
-        </button>
-        <button class="Hotspot" slot="hotspot-2" data-surface="0 0 28200 28201 28199 0.188 0.030 0.782" data-visibility-attribute="visible">
-            <div class="HotspotAnnotation">Compressor Section</div>
-        </button>
-        <button class="Hotspot" slot="hotspot-3" data-surface="825 0 295 297 298 0.107 0.348 0.545" data-visibility-attribute="visible">
-            <div class="HotspotAnnotation">Exhaust Section</div>
-        </button>
-        <button class="Hotspot" slot="hotspot-4" data-surface="45 0 30 31 32 0.527 0.264 0.209" data-visibility-attribute="visible">
-            <div class="HotspotAnnotation">Turbine Section</div>
-        </button>
-        <button class="Hotspot" slot="hotspot-5" data-surface="722 0 2213 2211 1988 0.068 0.459 0.473" data-visibility-attribute="visible">
-            <div class="HotspotAnnotation">Engine cowling</div>
-        </button>
-        <button class="Hotspot" slot="hotspot-6" data-surface="0 0 0 0 0 -0.168 -0.192 0.5" data-visibility-attribute="visible">
-            <div class="HotspotAnnotation">Combustion Section</div>
-        </button>
+        <a-camera 
+            gps-camera 
+            rotation-reader
+            look-controls-enabled="false"
+            arjs-look-controls="smoothingFactor: 0.1"
+            position="0 1.6 3">
+        </a-camera>
         
-        <div class="progress-bar hide" slot="progress-bar">
-            <div class="update-bar"></div>
-        </div>
+        <a-entity id="turbine-model"
+            gltf-model="./gas turbine engine exploded view. glTF.glb"
+            scale="0.3 0.3 0.3"
+            position="0 0 -5"
+            rotation="0 0 0">
+            
+            <a-sphere class="Hotspot" id="hotspot-air-inlet" 
+                position="-3 2 0" 
+                radius="0.15" 
+                color="#ff4444" 
+                opacity="0.8"
+                animation="property: scale; to: 1.2 1.2 1.2; dir: alternate; loop: true; dur: 2000">
+                <a-text value="Air Inlet" position="0 0.3 0" align="center" color="white" scale="2 2 2"></a-text>
+            </a-sphere>
+            
+            <a-sphere class="Hotspot" id="hotspot-compressor" 
+                position="-1.5 1 0" 
+                radius="0.15" 
+                color="#44ff44" 
+                opacity="0.8"
+                animation="property: scale; to: 1.2 1.2 1.2; dir: alternate; loop: true; dur: 2000">
+                <a-text value="Compressor Section" position="0 0.3 0" align="center" color="white" scale="2 2 2"></a-text>
+            </a-sphere>
+            
+            <a-sphere class="Hotspot" id="hotspot-combustion" 
+                position="0 0.5 0" 
+                radius="0.15" 
+                color="#ffff44" 
+                opacity="0.8"
+                animation="property: scale; to: 1.2 1.2 1.2; dir: alternate; loop: true; dur: 2000">
+                <a-text value="Combustion Section" position="0 0.3 0" align="center" color="white" scale="2 2 2"></a-text>
+            </a-sphere>
+            
+            <a-sphere class="Hotspot" id="hotspot-turbine" 
+                position="1.5 0 0" 
+                radius="0.15" 
+                color="#4444ff" 
+                opacity="0.8"
+                animation="property: scale; to: 1.2 1.2 1.2; dir: alternate; loop: true; dur: 2000">
+                <a-text value="Turbine Section" position="0 0.3 0" align="center" color="white" scale="2 2 2"></a-text>
+            </a-sphere>
+            
+            <a-sphere class="Hotspot" id="hotspot-exhaust" 
+                position="3 -0.5 0" 
+                radius="0.15" 
+                color="#ff44ff" 
+                opacity="0.8"
+                animation="property: scale; to: 1.2 1.2 1.2; dir: alternate; loop: true; dur: 2000">
+                <a-text value="Exhaust Section" position="0 0.3 0" align="center" color="white" scale="2 2 2"></a-text>
+            </a-sphere>
+            
+            <a-sphere class="Hotspot" id="hotspot-cowling" 
+                position="0 -2 0" 
+                radius="0.15" 
+                color="#44ffff" 
+                opacity="0.8"
+                animation="property: scale; to: 1.2 1.2 1.2; dir: alternate; loop: true; dur: 2000">
+                <a-text value="Engine cowling" position="0 0.3 0" align="center" color="white" scale="2 2 2"></a-text>
+            </a-sphere>
+        </a-entity>
         
-        <button slot="ar-button" id="ar-button" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 15px 30px; border-radius: 25px; font-size: 16px; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.3); cursor: pointer;">
-            🚀 View in AR
-        </button>
-        
-        <div id="ar-prompt">
-            <img src="./ar_hand_prompt.png">
-        </div>
-        
-        <div id="ar-failure" slot="ar-failure">
-            <p>AR is not available on this device. Please try on a mobile device with AR support.</p>
-        </div>
-    </model-viewer>
+        <a-light type="ambient" color="#404040"></a-light>
+        <a-light type="directional" position="0 1 0" color="#ffffff"></a-light>
+    </a-scene>
     
-    <div id="ar-ui" style="position: fixed; top: 20px; left: 20px; z-index: 1000; display: flex; flex-direction: column; gap: 10px;">
-        <button id="reset-btn" style="display: none; padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">Show All Hotspots</button>
+    <div id="ar-ui">
+        <button id="reset-btn">Show All Hotspots</button>
         
-        <select id="hotspot-dropdown" style="padding: 12px 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; box-shadow: 0 4px 15px rgba(0,0,0,0.2); min-width: 200px;">
-            <option value="" style="background: white; color: black;">Select Component</option>
-            <option value="Air Inlet" style="background: white; color: black;">Air Inlet</option>
-            <option value="Compressor Section" style="background: white; color: black;">Compressor Section</option>
-            <option value="Combustion Section" style="background: white; color: black;">Combustion Section</option>
-            <option value="Turbine Section" style="background: white; color: black;">Turbine Section</option>
-            <option value="Exhaust Section" style="background: white; color: black;">Exhaust Section</option>
-            <option value="Engine cowling" style="background: white; color: black;">Engine cowling</option>
+        <select id="hotspot-dropdown">
+            <option value="">Select Component</option>
+            <option value="Air Inlet">Air Inlet</option>
+            <option value="Compressor Section">Compressor Section</option>
+            <option value="Combustion Section">Combustion Section</option>
+            <option value="Turbine Section">Turbine Section</option>
+            <option value="Exhaust Section">Exhaust Section</option>
+            <option value="Engine cowling">Engine cowling</option>
         </select>
     </div>
     
-    <div id="description-panel" style="display: none; position: fixed; bottom: 20px; left: 20px; max-width: 350px; background: rgba(255,255,255,0.95); padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); z-index: 1000;">
-        <h3 id="description-title" style="margin: 0 0 15px 0; color: #333; font-size: 18px; font-weight: 600;"></h3>
-        <div id="description-content" style="color: #555; font-size: 14px; line-height: 1.6;"></div>
+    <div id="description-panel">
+        <h3 id="description-title"></h3>
+        <div id="description-content"></div>
     </div>
     
-    <script src="script.js"></script>
-    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+    <script>
+        const descriptions = {
+            'Air Inlet': {
+                title: 'Air Inlet',
+                content: `
+                    <p>The air inlet must get air to the compressor with the least possible fuss, meaning it should cause very little drag or pressure loss.</p>
+                    <p><strong>Goal:</strong> The air flow entering the compressor needs to be smooth and free of turbulence (rough, choppy flow).</p>
+                    <p><strong>Result:</strong> A good design ensures maximum operating efficiency and helps boost the final pressure the compressor can create. Basically, a well-designed inlet helps the engine work better and makes the aircraft perform better.</p>
+                `
+            },
+            'Compressor Section': {
+                title: 'Compressor Section',
+                content: `
+                    <p>The main job of the compressor in a gas turbine engine is to supply enough high-pressure air to the combustion burners.</p>
+                    <p><strong>Goal:</strong> The compressor must take the large mass of air from the inlet and increase its pressure significantly.</p>
+                    <p><strong>Result:</strong> It then discharges this air to the burners in the exact quantity and at the necessary pressure required for the fuel to burn efficiently and powerfully.</p>
+                `
+            },
+            'Combustion Section': {
+                title: 'Combustion Section',
+                content: `
+                    <p>The combustion section is where fuel is burned to make the air hotter.</p>
+                    <p><strong>Goal:</strong> The process of burning the air/fuel mixture releases energy (heat).</p>
+                    <p><strong>Result:</strong> The largest portion of this released energy is immediately used to spin the turbine blades, which in turn drives the compressor.</p>
+                `
+            },
+            'Turbine Section': {
+                title: 'Turbine Section',
+                content: `
+                    <p>The turbine acts like a highly efficient windmill in the hot exhaust gas stream.</p>
+                    <p><strong>Goal:</strong> To capture the energy from the hot, high-pressure exhaust gases and turn it into mechanical energy (rotation).</p>
+                    <p><strong>Result:</strong> It uses about 60% to 70% of the gas pressure energy to drive the compressor (the part that feeds air into the engine) and all the engine's accessories.</p>
+                `
+            },
+            'Exhaust Section': {
+                title: 'Exhaust Section',
+                content: `
+                    <p>The exhaust section is the final part of the engine where the gases exit.</p>
+                    <p><strong>Goal:</strong> To smooth out the flow of the hot gases, prevent turbulence, and direct them out the rear of the engine.</p>
+                    <p><strong>Result:</strong> It gives the exhaust gases a high final speed (velocity) as they exit the engine, which produces the thrust (forward push).</p>
+                `
+            },
+            'Engine cowling': {
+                title: 'Engine Cowling',
+                content: `
+                    <p>The engine cowling provides protection and aerodynamic efficiency.</p>
+                    <p><strong>Goal:</strong> To house and protect the internal engine components while maintaining smooth airflow.</p>
+                    <p><strong>Result:</strong> Ensures optimal engine performance and protects critical components from external elements.</p>
+                `
+            }
+        };
+
+        document.getElementById('hotspot-dropdown').addEventListener('change', (e) => {
+            const selectedHotspot = e.target.value;
+            const descriptionPanel = document.getElementById('description-panel');
+            const descriptionTitle = document.getElementById('description-title');
+            const descriptionContent = document.getElementById('description-content');
+            
+            document.querySelectorAll('.Hotspot').forEach(h => h.setAttribute('visible', 'false'));
+            
+            if (selectedHotspot && descriptions[selectedHotspot]) {
+                descriptionTitle.textContent = descriptions[selectedHotspot].title;
+                descriptionContent.innerHTML = descriptions[selectedHotspot].content;
+                descriptionPanel.style.display = 'block';
+                document.getElementById('reset-btn').style.display = 'block';
+                
+                const hotspotMap = {
+                    'Air Inlet': 'hotspot-air-inlet',
+                    'Compressor Section': 'hotspot-compressor',
+                    'Combustion Section': 'hotspot-combustion',
+                    'Turbine Section': 'hotspot-turbine',
+                    'Exhaust Section': 'hotspot-exhaust',
+                    'Engine cowling': 'hotspot-cowling'
+                };
+                
+                const hotspotId = hotspotMap[selectedHotspot];
+                if (hotspotId) {
+                    document.getElementById(hotspotId).setAttribute('visible', 'true');
+                }
+            } else {
+                descriptionPanel.style.display = 'none';
+                document.getElementById('reset-btn').style.display = 'none';
+                document.querySelectorAll('.Hotspot').forEach(h => h.setAttribute('visible', 'true'));
+            }
+        });
+
+        document.getElementById('reset-btn').addEventListener('click', () => {
+            document.querySelectorAll('.Hotspot').forEach(h => h.setAttribute('visible', 'true'));
+            document.getElementById('reset-btn').style.display = 'none';
+            document.getElementById('description-panel').style.display = 'none';
+            document.getElementById('hotspot-dropdown').value = '';
+        });
+    </script>
 </body>
 </html>
