@@ -8,14 +8,18 @@
 </head>
 <body>
     <model-viewer 
-        src="https://modelviewer.dev/shared-assets/models/NeilArmstrong.glb"
-        alt="AR Model"
+        src="./gas turbine engine exploded view. glTF.glb" 
+        alt="AR Turbine Engine Model"
         ar 
-        ar-modes="scene-viewer quick-look" 
+        ar-modes="scene-viewer webxr quick-look" 
+        ar-scale="fixed"
         camera-controls 
         tone-mapping="neutral" 
-        shadow-intensity="1" 
-        shadow-softness="0.75"
+        poster="./poster.webp" 
+        shadow-intensity="1.18" 
+        shadow-softness="0.4" 
+        autoplay 
+        environment-image="./aircraft_workshop_01_1k.hdr" 
         interpolation-decay="200" 
         camera-orbit-transition-time="2000ms">
         
