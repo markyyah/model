@@ -36,9 +36,19 @@ window.addEventListener('DOMContentLoaded', () => {
     
     // Check AR capability on button click
     document.getElementById('ar-button').addEventListener('click', () => {
+      console.log('AR button clicked');
       if (!modelViewer.canActivateAR) {
+        console.error('AR not supported');
         alert('AR not supported on this device. Requirements:\n- Android 7+ with Google Play Services for AR\n- iOS 11+ with ARKit support\n- Chrome/Safari browser');
+      } else {
+        console.log('AR should start now');
       }
+    });
+    
+    // Model error handling
+    modelViewer.addEventListener('error', (event) => {
+      console.error('Model loading error:', event.detail);
+      alert('Error loading 3D model. Please check your internet connection.');
     });
     
     const hotspots = document.querySelectorAll('.Hotspot');

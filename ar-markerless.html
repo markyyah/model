@@ -20,12 +20,19 @@
         </a-camera>
         
         <!-- Place model 10 meters in front of user -->
-        <a-entity
+        <a-entity id="turbine-model"
             gltf-model="./gas turbine engine exploded view. glTF.glb"
             scale="0.5 0.5 0.5"
             position="0 0 -10"
-            rotation="0 0 0"
-            animation="property: rotation; to: 0 360 0; loop: true; dur: 15000">
+            rotation="0 0 0">
+            
+            <!-- Hotspots positioned around the model -->
+            <a-sphere id="hotspot-air" position="-2 1 0" radius="0.1" color="#ff4444" opacity="0.8"></a-sphere>
+            <a-sphere id="hotspot-compressor" position="-1 0.5 0" radius="0.1" color="#44ff44" opacity="0.8"></a-sphere>
+            <a-sphere id="hotspot-combustion" position="0 0 0" radius="0.1" color="#ffff44" opacity="0.8"></a-sphere>
+            <a-sphere id="hotspot-turbine" position="1 -0.5 0" radius="0.1" color="#4444ff" opacity="0.8"></a-sphere>
+            <a-sphere id="hotspot-exhaust" position="2 -1 0" radius="0.1" color="#ff44ff" opacity="0.8"></a-sphere>
+            <a-sphere id="hotspot-cowling" position="0 -2 0" radius="0.1" color="#44ffff" opacity="0.8"></a-sphere>
         </a-entity>
         
         <!-- Lighting -->
@@ -33,13 +40,57 @@
         <a-light type="directional" position="0 1 0" color="#ffffff"></a-light>
     </a-scene>
     
-    <div style="position: fixed; top: 10px; left: 10px; background: rgba(0,0,0,0.8); color: white; padding: 15px; border-radius: 8px; z-index: 1000; max-width: 300px;">
+    <div style="position: fixed; top: 10px; left: 10px; background: rgba(0,0,0,0.9); color: white; padding: 15px; border-radius: 8px; z-index: 1000; max-width: 300px;">
         <h3 style="margin: 0 0 10px 0;">AR Turbine Engine</h3>
-        <p style="margin: 0; font-size: 14px;">Move your device to see the 3D model in world space. Allow camera and location permissions.</p>
+        <select id="component-selector" style="width: 100%; padding: 8px; border-radius: 4px; border: none; margin-bottom: 10px;">
+            <option value="">Select Component</option>
+            <option value="air">Air Inlet</option>
+            <option value="compressor">Compressor Section</option>
+            <option value="combustion">Combustion Section</option>
+            <option value="turbine">Turbine Section</option>
+            <option value="exhaust">Exhaust Section</option>
+            <option value="cowling">Engine Cowling</option>
+        </select>
+        <div id="description" style="font-size: 12px; line-height: 1.4;">Tap colored spheres or use dropdown to learn about each component.</div>
     </div>
     
     <div style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 20px; border-radius: 20px; z-index: 1000;">
-        Markerless AR Active
+        AR Active - Look for colored hotspots
     </div>
+    
+    <script>
+        const descriptions = {
+            air: "Air Inlet: Gets air to the compressor with minimal drag. Ensures smooth, turbulence-free airflow for maximum efficiency.",
+            compressor: "Compressor Section: Takes large mass of air and increases pressure significantly for efficient fuel burning.",
+            combustion: "Combustion Section: Where fuel burns to heat air. Energy released spins turbine blades and drives compressor.",
+            turbine: "Turbine Section: Acts like a windmill capturing energy from hot gases. Uses 60-70% of energy to drive compressor.",
+            exhaust: "Exhaust Section: Final part where gases exit. Smooths flow and creates high-speed thrust for forward push.",
+            cowling: "Engine Cowling: Protective outer shell that houses and protects internal engine components."
+        };
+        
+        document.getElementById('component-selector').addEventListener('change', function(e) {
+            const component = e.target.value;
+            const descDiv = document.getElementById('description');
+            
+            if (component && descriptions[component]) {
+                descDiv.textContent = descriptions[component];
+                // Highlight corresponding hotspot
+                document.querySelectorAll('a-sphere').forEach(sphere => {
+                    sphere.setAttribute('opacity', '0.3');
+                });
+                const hotspot = document.getElementById('hotspot-' + component);
+                if (hotspot) {
+                    hotspot.setAttribute('opacity', '1');
+                    hotspot.setAttribute('animation', 'property: scale; to: 1.5 1.5 1.5; dir: alternate; loop: true; dur: 1000');
+                }
+            } else {
+                descDiv.textContent = 'Tap colored spheres or use dropdown to learn about each component.';
+                document.querySelectorAll('a-sphere').forEach(sphere => {
+                    sphere.setAttribute('opacity', '0.8');
+                    sphere.removeAttribute('animation');
+                });
+            }
+        });
+    </script>
 </body>
 </html>
