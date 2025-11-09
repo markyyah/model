@@ -17,9 +17,18 @@ window.addEventListener('DOMContentLoaded', () => {
   const modelViewer = document.querySelector('model-viewer');
   
   modelViewer.addEventListener('load', () => {
+    console.log('Model loaded successfully');
     // Set initial camera position to match default
     modelViewer.cameraOrbit = '-0.8355192608086832rad 0.9153384632743027rad 1195.1577537734665m';
     modelViewer.cameraTarget = '-41.99543672808999m -6.491963504212178m -83.71453391574049m';
+    
+    // AR debugging
+    modelViewer.addEventListener('ar-status', (event) => {
+      console.log('AR Status:', event.detail.status);
+      if (event.detail.status === 'failed') {
+        console.error('AR failed to start');
+      }
+    });
     
     const hotspots = document.querySelectorAll('.Hotspot');
     
