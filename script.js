@@ -22,11 +22,22 @@ window.addEventListener('DOMContentLoaded', () => {
     modelViewer.cameraOrbit = '-0.8355192608086832rad 0.9153384632743027rad 1195.1577537734665m';
     modelViewer.cameraTarget = '-41.99543672808999m -6.491963504212178m -83.71453391574049m';
     
-    // AR debugging
+    // AR debugging and capability check
+    console.log('AR supported:', modelViewer.canActivateAR);
+    console.log('User agent:', navigator.userAgent);
+    
     modelViewer.addEventListener('ar-status', (event) => {
       console.log('AR Status:', event.detail.status);
       if (event.detail.status === 'failed') {
         console.error('AR failed to start');
+        alert('AR failed: Make sure you\'re on a mobile device with AR support (Android 7+ with ARCore or iOS 11+ with ARKit)');
+      }
+    });
+    
+    // Check AR capability on button click
+    document.getElementById('ar-button').addEventListener('click', () => {
+      if (!modelViewer.canActivateAR) {
+        alert('AR not supported on this device. Requirements:\n- Android 7+ with Google Play Services for AR\n- iOS 11+ with ARKit support\n- Chrome/Safari browser');
       }
     });
     
