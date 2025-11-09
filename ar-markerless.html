@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Markerless AR Turbine Engine</title>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
+</head>
+<body style="margin: 0; font-family: Arial;">
+    <a-scene 
+        vr-mode-ui="enabled: false" 
+        arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;"
+        renderer="antialias: true; alpha: true">
+        
+        <a-camera 
+            gps-camera 
+            rotation-reader
+            look-controls-enabled="false"
+            arjs-look-controls="smoothingFactor: 0.1">
+        </a-camera>
+        
+        <!-- Place model 10 meters in front of user -->
+        <a-entity
+            gltf-model="./gas turbine engine exploded view. glTF.glb"
+            scale="0.5 0.5 0.5"
+            position="0 0 -10"
+            rotation="0 0 0"
+            animation="property: rotation; to: 0 360 0; loop: true; dur: 15000">
+        </a-entity>
+        
+        <!-- Lighting -->
+        <a-light type="ambient" color="#404040"></a-light>
+        <a-light type="directional" position="0 1 0" color="#ffffff"></a-light>
+    </a-scene>
+    
+    <div style="position: fixed; top: 10px; left: 10px; background: rgba(0,0,0,0.8); color: white; padding: 15px; border-radius: 8px; z-index: 1000; max-width: 300px;">
+        <h3 style="margin: 0 0 10px 0;">AR Turbine Engine</h3>
+        <p style="margin: 0; font-size: 14px;">Move your device to see the 3D model in world space. Allow camera and location permissions.</p>
+    </div>
+    
+    <div style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 20px; border-radius: 20px; z-index: 1000;">
+        Markerless AR Active
+    </div>
+</body>
+</html>

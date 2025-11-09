@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>WebXR AR Turbine Engine</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { margin: 0; font-family: Arial; background: #000; }
+        #info { position: absolute; top: 10px; left: 10px; color: white; background: rgba(0,0,0,0.8); padding: 15px; border-radius: 8px; z-index: 100; }
+        #ar-button { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); padding: 15px 30px; background: #007bff; color: white; border: none; border-radius: 25px; font-size: 16px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div id="info">
+        <h3>WebXR AR Turbine Engine</h3>
+        <p>Click "Start AR" to place the model in your space</p>
+    </div>
+    
+    <button id="ar-button">Start AR</button>
+    
+    <script type="module">
+        import * as THREE from 'https://unpkg.com/three@0.150.0/build/three.module.js';
+        import { GLTFLoader } from 'https://unpkg.com/three@0.150.0/examples/jsm/loaders/GLTFLoader.js';
+        import { ARButton } from 'https://unpkg.com/three@0.150.0/examples/jsm/webxr/ARButton.js';
+
+        let scene, camera, renderer, model;
+
+        init();
+
+        function init() {
+            // Scene
+            scene = new THREE.Scene();
+
+            // Camera
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.xr.enabled = true;
+            document.body.appendChild(renderer.domElement);
+
+            // Lighting
+            const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+            scene.add(light);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+            directionalLight.position.set(1, 1, 1);
+            scene.add(directionalLight);
+
+            // Load model
+            const loader = new GLTFLoader();
+            loader.load('./gas turbine engine exploded view. glTF.glb', (gltf) => {
+                model = gltf.scene;
+                model.scale.set(0.1, 0.1, 0.1);
+                model.position.set(0, 0, -2);
+                scene.add(model);
+                console.log('Model loaded');
+            }, undefined, (error) => {
+                console.error('Error loading model:', error);
+            });
+
+            // AR Button
+            const arButton = ARButton.createButton(renderer, { requiredFeatures: ['hit-test'] });
+            document.body.appendChild(arButton);
+
+            // Hide custom button, show WebXR button
+            document.getElementById('ar-button').style.display = 'none';
+
+            // Animation loop
+            renderer.setAnimationLoop(render);
+        }
+
+        function render() {
+            if (model) {
+                model.rotation.y += 0.01;
+            }
+            renderer.render(scene, camera);
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
