@@ -6,6 +6,7 @@
     <title>AR Turbine Engine</title>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
     <style>
         body { margin: 0; font-family: Arial; }
         #ar-ui { position: fixed; top: 20px; left: 20px; z-index: 1000; display: flex; flex-direction: column; gap: 10px; }
@@ -19,22 +20,22 @@
 <body>
     <a-scene 
         vr-mode-ui="enabled: false" 
-        arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;"
-        renderer="antialias: true; alpha: true">
+        arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false; trackingMethod: best;"
+        renderer="antialias: true; alpha: true"
+        gesture-detector>
         
         <a-camera 
-            gps-camera 
-            rotation-reader
-            look-controls-enabled="false"
-            arjs-look-controls="smoothingFactor: 0.1"
-            position="0 1.6 3">
+            look-controls="enabled: true; touchEnabled: true; mouseEnabled: true"
+            wasd-controls="enabled: true"
+            position="0 2 8">
         </a-camera>
         
         <a-entity id="turbine-model"
             gltf-model="./gas turbine engine exploded view. glTF.glb"
-            scale="0.3 0.3 0.3"
-            position="0 0 -5"
-            rotation="0 0 0">
+            scale="0.5 0.5 0.5"
+            position="0 1 0"
+            rotation="0 0 0"
+            gesture-handler="minScale: 0.25; maxScale: 10">
             
             <a-sphere class="Hotspot" id="hotspot-air-inlet" 
                 position="-3 2 0" 
