@@ -27,16 +27,17 @@
         <a-camera 
             look-controls="enabled: true; touchEnabled: true; mouseEnabled: true"
             wasd-controls="enabled: true"
-            position="0 0 0"
-            rotation="0 0 0">
+            position="0 0 3"
+            rotation="0 180 0">
         </a-camera>
         
         <a-entity id="turbine-model"
             gltf-model="./gas turbine engine exploded view. glTF.glb"
-            scale="0.8 0.8 0.8"
-            position="0 0 -3"
+            scale="1 1 1"
+            position="0 0 0"
             rotation="0 0 0"
-            gesture-handler="minScale: 0.25; maxScale: 10">
+            gesture-handler="minScale: 0.1; maxScale: 5"
+            class="clickable">
             
             <a-sphere class="Hotspot" id="hotspot-air-inlet" 
                 position="-2 1 0" 
@@ -207,6 +208,123 @@
             document.getElementById('reset-btn').style.display = 'none';
             document.getElementById('description-panel').style.display = 'none';
             document.getElementById('hotspot-dropdown').value = '';
+        });
+        
+        // Register gesture handler component
+        AFRAME.registerComponent('gesture-handler', {
+            schema: {
+                enabled: { default: true },
+                rotationFactor: { default: 5 },
+                minScale: { default: 0.3 },
+                maxScale: { default: 8 },
+            },
+            
+            init: function () {
+                this.handleScale = this.handleScale.bind(this);
+                this.handleRotation = this.handleRotation.bind(this);
+                
+                this.isVisible = true;
+                this.initialScale = this.el.object3D.scale.clone();
+                this.scaleFactor = 1;
+                
+                this.el.sceneEl.addEventListener('onefingermove', this.handleRotation);
+                this.el.sceneEl.addEventListener('twofingermove', this.handleScale);
+            },
+            
+            handleRotation: function (event) {
+                if (this.isVisible) {
+                    this.el.object3D.rotation.y += event.detail.positionChange.x * this.data.rotationFactor * (Math.PI / 180);
+                    this.el.object3D.rotation.x += event.detail.positionChange.y * this.data.rotationFactor * (Math.PI / 180);
+                }
+            },
+            
+            handleScale: function (event) {
+                if (this.isVisible) {
+                    this.scaleFactor *= 1 + event.detail.spreadChange / event.detail.startSpread;
+                    this.scaleFactor = Math.min(Math.max(this.scaleFactor, this.data.minScale), this.data.maxScale);
+                    
+                    this.el.object3D.scale.x = this.scaleFactor * this.initialScale.x;
+                    this.el.object3D.scale.y = this.scaleFactor * this.initialScale.y;
+                    this.el.object3D.scale.z = this.scaleFactor * this.initialScale.z;
+                }
+            }
+        });
+        
+        // Register gesture detector
+        AFRAME.registerComponent('gesture-detector', {
+            schema: {
+                element: { default: '' }
+            },
+            
+            init: function () {
+                this.targetElement = this.data.element && document.querySelector(this.data.element) || this.el;
+                
+                this.internalState = {
+                    previousState: null
+                };
+                
+                this.emitGestureEvent = this.emitGestureEvent.bind(this);
+                
+                this.targetElement.addEventListener('touchstart', this.handleTouchStart.bind(this));
+                this.targetElement.addEventListener('touchend', this.handleTouchEnd.bind(this));
+                this.targetElement.addEventListener('touchmove', this.handleTouchMove.bind(this));
+            },
+            
+            handleTouchStart: function (event) {
+                this.internalState.startTime = performance.now();
+                this.internalState.startPosition = this.getGesturePointFromEvent(event);
+                this.internalState.startSpread = this.getGestureSpreadFromEvent(event);
+            },
+            
+            handleTouchMove: function (event) {
+                if (!this.internalState.startTime) return;
+                
+                const currentPosition = this.getGesturePointFromEvent(event);
+                const currentSpread = this.getGestureSpreadFromEvent(event);
+                
+                const timeDelta = performance.now() - this.internalState.startTime;
+                const positionChange = {
+                    x: currentPosition.x - this.internalState.startPosition.x,
+                    y: currentPosition.y - this.internalState.startPosition.y
+                };
+                
+                if (event.touches.length === 2) {
+                    this.emitGestureEvent('twofingermove', {
+                        positionChange: positionChange,
+                        spreadChange: currentSpread - this.internalState.startSpread,
+                        startSpread: this.internalState.startSpread,
+                        timeDelta: timeDelta
+                    });
+                } else {
+                    this.emitGestureEvent('onefingermove', {
+                        positionChange: positionChange,
+                        timeDelta: timeDelta
+                    });
+                }
+            },
+            
+            handleTouchEnd: function (event) {
+                this.internalState.previousState = this.internalState;
+                this.internalState = {};
+            },
+            
+            emitGestureEvent: function (eventName, detail) {
+                this.el.emit(eventName, detail);
+            },
+            
+            getGesturePointFromEvent: function (event) {
+                const touchEvent = event.touches ? event.touches[0] : event;
+                return { x: touchEvent.clientX, y: touchEvent.clientY };
+            },
+            
+            getGestureSpreadFromEvent: function (event) {
+                if (event.touches && event.touches.length === 2) {
+                    const touch1 = event.touches[0];
+                    const touch2 = event.touches[1];
+                    return Math.sqrt(Math.pow(touch2.clientX - touch1.clientX, 2) + Math.pow(touch2.clientY - touch1.clientY, 2));
+                }
+                return 0;
+            }
         });
     </script>
 </body>
